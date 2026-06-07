@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quimigrate.AI — AI-Powered Immigration Assistant</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-serif-display@5.0.0/index.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5.0.0/index.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js"></script>
+<style>
+  :root {
+    --accent: #25D0B1;
+    --accent-soft: rgba(37, 208, 177, 0.12);
+    --dark: #081B2E;
+    --light: #F8FAFC;
+    --border: #E8EDF3;
+    --text: #081B2E;
+    --text-sec: #64748B;
+  }
+  * { -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text);
+    background: #fff;
+    overflow-x: hidden;
+  }
+  .font-serif-display { font-family: 'DM Serif Display', serif; }
+  .text-accent { color: var(--accent); }
+  .bg-accent { background-color: var(--accent); }
+  .bg-dark { background-color: var(--dark); }
+  .border-accent { border-color: var(--accent); }
+  .border-light { border-color: var(--border); }
+
+  /* Hero gradient */
+  .hero-bg {
+    background: radial-gradient(ellipse at top right, rgba(37, 208, 177, 0.18), transparent 55%),
+                radial-gradient(ellipse at bottom left, rgba(37, 208, 177, 0.10), transparent 50%),
+                linear-gradient(180deg, #081B2E 0%, #0B2240 50%, #081B2E 100%);
+  }
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(37, 208, 177, 0.35), transparent 60%);
+    filter: blur(80px);
+    pointer-events: none;
+  }
+
+  /* Glassmorphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  /* Buttons */
+  .btn-primary {
+    background: var(--accent);
+    color: var(--dark);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px -10px rgba(37, 208, 177, 0.5);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -10px rgba(37, 208, 177, 0.6);
+  }
+  .btn-ghost {
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.15);
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  .btn-ghost:hover {
+    background: rgba(255,255,255,0.12);
+    transform: translateY(-2px);
+  }
+  .btn-dark {
+    background: var(--dark);
+    color: #fff;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  .btn-dark:hover { transform: translateY(-2px); box-shadow: 0 20px 40px -10px rgba(8, 27, 46, 0.4); }
+  .btn-outline {
+    background: transparent;
+    color: var(--dark);
+    border: 1px solid var(--border);
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  .btn-outline:hover { border-color: var(--dark); transform: translateY(-2px); }
+
+  /* Cards */
+  .premium-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    transition: all 0.4s ease;
+  }
+  .premium-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 30px 60px -20px rgba(8, 27, 46, 0.12);
+    border-color: rgba(37, 208, 177, 0.4);
+  }
+  .premium-card-dark {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    transition: all 0.4s ease;
+  }
+  .premium-card-dark:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(37, 208, 177, 0.3);
+    transform: translateY(-4px);
+  }
+
+  /* Badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid rgba(37, 208, 177, 0.25);
+  }
+  .badge-dark {
+    background: rgba(37, 208, 177, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(37, 208, 177, 0.2);
+  }
+
+  /* Animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+  }
+  .float-anim { animation: float 6s ease-in-out infinite; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up { animation: fadeUp 0.8s ease-out forwards; }
+  .fade-up-delay-1 { animation-delay: 0.15s; opacity: 0; }
+  .fade-up-delay-2 { animation-delay: 0.3s; opacity: 0; }
+  .fade-up-delay-3 { animation-delay: 0.45s; opacity: 0; }
+
+  /* Progress ring */
+  .progress-ring { transform: rotate(-90deg); }
+
+  /* Nav */
+  .nav-blur {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-dark-blur {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(8, 27, 46, 0.75);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* Section divider */
+  .section-pad { padding-top: 120px; padding-bottom: 120px; }
+  @media (max-width: 768px) {
+    .section-pad { padding-top: 80px; padding-bottom: 80px; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: #fff; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* Feature icon container */
+  .icon-box {
+    width: 56px; height: 56px;
+    background: var(--accent-soft);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    transition: all 0.3s ease;
+  }
+  .premium-card:hover .icon-box {
+    background: var(--accent);
+    color: var(--dark);
+    transform: scale(1.05);
+  }
+
+  /* CTA bg */
+  .cta-bg {
+    background: linear-gradient(180deg, #081B2E 0%, #0B2240 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('https://image.qwenlm.ai/public_source/fef3353f-8d3b-44bc-86ac-2246aa7ef3be/191999414-7317-473d-86bf-19c9aae808aa.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.35;
+    mix-blend-mode: screen;
+  }
+
+  /* Testimonial avatar */
+  .avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #1a9d84);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  /* Step number */
+  .step-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 72px;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--accent), #1a9d84);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  @media (max-width: 768px) { .step-num { font-size: 56px; } }
+
+  /* Showcase frame */
+  .showcase-frame {
+    background: linear-gradient(180deg, #F1F5F9 0%, #E2E8F0 100%);
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow: 0 40px 80px -20px rgba(8, 27, 46, 0.15);
+    border: 1px solid var(--border);
+  }
+
+  /* Trust check */
+  .trust-item {
+    display: flex; align-items: center; gap: 10px;
+    color: rgba(255,255,255,0.85);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .trust-item svg { color: var(--accent); flex-shrink: 0; }
+
+  /* Benefit check */
+  .benefit-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 0;
+  }
+  .benefit-check {
+    width: 28px; height: 28px;
+    background: var(--accent-soft);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-50 nav-blur">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="flex items-center justify-between h-20">
+      <a href="#" class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-accent flex items-center justify-center">
+          <i data-lucide="sparkles" class="w-5 h-5" style="color:#081B2E"></i>
+        </div>
+        <span class="font-serif-display text-xl text-dark">Quimigrate<span class="text-accent">.AI</span></span>
+      </a>
+      <div class="hidden lg:flex items-center gap-9">
+        <a href="#how" class="text-sm font-medium text-text-sec hover:text-dark transition">How it Works</a>
+        <a href="#features" class="text-sm font-medium text-text-sec hover:text-dark transition">Features</a>
+        <a href="#security" class="text-sm font-medium text-text-sec hover:text-dark transition">Security</a>
+        <a href="#testimonials" class="text-sm font-medium text-text-sec hover:text-dark transition">Testimonials</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="#" class="hidden sm:inline text-sm font-semibold text-dark hover:text-accent transition">Sign In</a>
+        <a href="#" class="btn-primary text-sm px-5 py-2.5 rounded-full">Get Started</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-bg relative min-h-screen flex items-center pt-28 pb-20 overflow-hidden">
+  <div class="hero-glow" style="top: -200px; right: -100px;"></div>
+  <div class="hero-glow" style="bottom: -300px; left: -200px; background: radial-gradient(circle, rgba(37, 208, 177, 0.2), transparent 60%);"></div>
+
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 w-full relative z-10">
+    <div class="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
+      <!-- LEFT -->
+      <div class="fade-up">
+        <div class="badge mb-7">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          AI-Powered Immigration Assistant
+        </div>
+        <h1 class="font-serif-display text-white text-5xl sm:text-6xl lg:text-7xl leading-[1.05] mb-7">
+          Immigration Forms,<br>
+          <span class="text-accent">Powered by AI.</span>
+        </h1>
+        <p class="text-lg text-white/70 leading-relaxed mb-10 max-w-xl">
+          Quimigrate.AI helps individuals and law firms prepare immigration documents faster, more accurately, and with significantly less administrative work.
+        </p>
+        <div class="flex flex-wrap gap-4 mb-12">
+          <a href="#" class="btn-primary px-7 py-4 rounded-full text-base inline-flex items-center gap-2">
+            Start Free Demo
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+          <a href="#" class="btn-ghost px-7 py-4 rounded-full text-base inline-flex items-center gap-2">
+            <i data-lucide="calendar" class="w-4 h-4"></i>
+            Book Consultation
+          </a>
+        </div>
+        <div class="flex flex-wrap gap-x-8 gap-y-4">
+          <div class="trust-item">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+            Trusted by Immigration Professionals
+          </div>
+          <div class="trust-item">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+            Secure & Privacy Focused
+          </div>
+          <div class="trust-item">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+            Attorney-Friendly Workflow
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Dashboard Mockup -->
+      <div class="fade-up fade-up-delay-2 relative">
+        <div class="float-anim">
+          <img src="https://image.qwenlm.ai/public_source/fef3353f-8d3b-44bc-86ac-2246aa7ef3be/1bf834a77-bef9-4f21-9a04-581369356152.png" alt="Quimigrate.AI Dashboard" class="w-full rounded-3xl shadow-2xl" style="box-shadow: 0 40px 80px -20px rgba(0,0,0,0.5), 0 0 60px rgba(37, 208, 177, 0.15);" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="section-pad bg-white">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="text-center max-w-2xl mx-auto mb-16 fade-up">
+      <div class="badge mb-5">
+        <i data-lucide="workflow" class="w-4 h-4"></i>
+        Simple Process
+      </div>
+      <h2 class="font-serif-display text-4xl sm:text-5xl lg:text-6xl text-dark leading-tight mb-5">
+        How Quimigrate.AI Works
+      </h2>
+      <p class="text-lg text-text-sec leading-relaxed">
+        Three simple steps to transform your immigration document workflow with AI.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
+      <!-- Card 1 -->
+      <div class="premium-card p-8 lg:p-10 fade-up fade-up-delay-1">
+        <div class="step-num mb-4">01</div>
+        <div class="icon-box mb-6">
+          <i data-lucide="message-circle" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif-display text-2xl text-dark mb-3">Chat With AI</h3>
+        <p class="text-text-sec leading-relaxed">Client answers simple questions through a conversational AI interface designed for clarity.</p>
+      </div>
+      <!-- Card 2 -->
+      <div class="premium-card p-8 lg:p-10 fade-up fade-up-delay-2">
+        <div class="step-num mb-4">02</div>
+        <div class="icon-box mb-6">
+          <i data-lucide="file-text" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif-display text-2xl text-dark mb-3">AI Generates Forms</h3>
+        <p class="text-text-sec leading-relaxed">System prepares immigration paperwork automatically with precision and legal accuracy.</p>
+      </div>
+      <!-- Card 3 -->
+      <div class="premium-card p-8 lg:p-10 fade-up fade-up-delay-3">
+        <div class="step-num mb-4">03</div>
+        <div class="icon-box mb-6">
+          <i data-lucide="check-check" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif-display text-2xl text-dark mb-3">Review & Submit</h3>
+        <p class="text-text-sec leading-relaxed">Attorney or applicant reviews everything before filing with confidence and peace of mind.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT SHOWCASE -->
+<section class="section-pad bg-light">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="text-center max-w-2xl mx-auto mb-14 fade-up">
+      <div class="badge mb-5">
+        <i data-lucide="monitor" class="w-4 h-4"></i>
+        Product Preview
+      </div>
+      <h2 class="font-serif-display text-4xl sm:text-5xl lg:text-6xl text-dark leading-tight mb-5">
+        A Complete Immigration Workspace
+      </h2>
+      <p class="text-lg text-text-sec leading-relaxed">
+        Everything you need to manage cases, track progress, and collaborate with clients — in one elegant platform.
+      </p>
+    </div>
+
+    <div class="fade-up fade-up-delay-1">
+      <div class="showcase-frame">
+        <img src="https://image.qwenlm.ai/public_source/fef3353f-8d3b-44bc-86ac-2246aa7ef3be/1cca06714-57e4-40d5-8e00-817c4cecbe64.png" alt="Quimigrate.AI Product Dashboard" class="w-full rounded-2xl" />
+      </div>
+    </div>
+
+    <!-- Feature chips -->
+    <div class="flex flex-wrap justify-center gap-3 mt-10">
+      <div class="px-5 py-2.5 bg-white border border-light rounded-full text-sm font-semibold text-dark inline-flex items-center gap-2">
+        <i data-lucide="message-square" class="w-4 h-4 text-accent"></i> AI Chat
+      </div>
+      <div class="px-5 py-2.5 bg-white border border-light rounded-full text-sm font-semibold text-dark inline-flex items-center gap-2">
+        <i data-lucide="clock" class="w-4 h-4 text-accent"></i> Immigration Timeline
+      </div>
+      <div class="px-5 py-2.5 bg-white border border-light rounded-full text-sm font-semibold text-dark inline-flex items-center gap-2">
+        <i data-lucide="trending-up" class="w-4 h-4 text-accent"></i> Case Progress
+      </div>
+      <div class="px-5 py-2.5 bg-white border border-light rounded-full text-sm font-semibold text-dark inline-flex items-center gap-2">
+        <i data-lucide="list-checks" class="w-4 h-4 text-accent"></i> Document Checklist
+      </div>
+      <div class="px-5 py-2.5 bg-white border border-light rounded-full text-sm font-semibold text-dark inline-flex items-center gap-2">
+        <i data-lucide="activity" class="w-4 h-4 text-accent"></i> Status Tracking
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KEY BENEFITS -->
+<section class="section-pad bg-white">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
+      <!-- Left: Illustration -->
+      <div class="fade-up">
+        <div class="relative">
+          <div class="absolute -inset-6 bg-accent/10 rounded-3xl blur-3xl"></div>
+          <div class="relative bg-white border border-light rounded-3xl p-6 shadow-xl">
+            <img src="https://image.qwenlm.ai/public_source/fef3353f-8d3b-44bc-86ac-2246aa7ef3be/13e92679c-c016-4bf3-8c0e-9425a24eea60.png" alt="Dashboard Illustration" class="w-full rounded-2xl" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Benefits -->
+      <div class="fade-up fade-up-delay-1">
+        <div class="badge mb-5">
+          <i data-lucide="zap" class="w-4 h-4"></i>
+          Why Quimigrate.AI
+        </div>
+        <h2 class="font-serif-display text-4xl sm:text-5xl text-dark leading-tight mb-6">
+          Built for Modern Immigration Practice
+        </h2>
+        <p class="text-lg text-text-sec leading-relaxed mb-8">
+          Streamline your workflow from client intake to final submission with tools designed by legal-tech experts.
+        </p>
+
+        <div class="space-y-1">
+          <div class="benefit-item">
+            <div class="benefit-check"><i data-lucide="check" class="w-4 h-4"></i></div>
+            <div>
+              <div class="font-semibold text-dark">Reduce preparation time</div>
+              <div class="text-sm text-text-sec">Automate repetitive form-filling tasks</div>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-check"><i data-lucide="check" class="w-4 h-4"></i></div>
+            <div>
+              <div class="font-semibold text-dark">Minimize manual errors</div>
+              <div class="text-sm text-text-sec">AI validates data before submission</div>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-check"><i data-lucide="check" class="w-4 h-4"></i></div>
+            <div>
+              <div class="font-semibold text-dark">Improve client intake</div>
+              <div class="text-sm text-text-sec">Conversational onboarding that clients love</div>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-check"><i data-lucide="check" class="w-4 h-4"></i></div>
+            <div>
+              <div class="font-semibold text-dark">Support law firm workflows</div>
+              <div class="text-sm text-text-sec">Built for teams of any size</div>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-check"><i data-lucide="check" class="w-4 h-4"></i></div>
+            <div>
+              <div class="font-semibold text-dark">Secure document handling</div>
+              <div class="text-sm text-text-sec">End-to-end encryption at every step</div>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-check"><i data-lucide="check" class="w-4 h-4"></i></div>
+            <div>
+              <div class="font-semibold text-dark">Easy collaboration</div>
+              <div class="text-sm text-text-sec">Share cases with attorneys and clients seamlessly</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI FEATURES -->
+<section id="features" class="section-pad bg-light">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="text-center max-w-2xl mx-auto mb-16 fade-up">
+      <div class="badge mb-5">
+        <i data-lucide="cpu" class="w-4 h-4"></i>
+        AI Features
+      </div>
+      <h2 class="font-serif-display text-4xl sm:text-5xl lg:text-6xl text-dark leading-tight mb-5">
+        Intelligent Tools for Every Case
+      </h2>
+      <p class="text-lg text-text-sec leading-relaxed">
+        Six powerful AI capabilities designed specifically for immigration professionals.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="premium-card p-8 fade-up fade-up-delay-1">
+        <div class="icon-box mb-6">
+          <i data-lucide="file-edit" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif-display text-2xl text-dark mb-3">Smart Form Preparation</h3>
+        <p class="text-text-sec leading-relaxed">AI auto-fills complex immigration forms with precision, reducing hours of manual work to minutes.</p>
+      </div>
+
+      <div class="premium-card p-8 fade-up fade-up-delay-2">
+        <div class="icon-box mb-6">
+          <i data-lucide="compass" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif-display text-2xl text-dark mb-3">AI Case Guidance</h3>
+        <p class="text-text-sec leading-relaxed">Get intelligent recommendations on case strategy, documentation requirements, and next steps.</p>
+      </div>
+
+      <div class="premium-card p-8 fade-up fade-up-delay-3">
+        <div class="icon-box mb-6">
+          <i data-lucide="list-checks" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif-display text-2xl text-dark mb-3">Document Checklist Generator</h3>
+        <p class="text-text-sec leading-relaxed">Automatically generate personalized checklists based on case type and client profile.</p>
+      </div>
+
+      <div class="premium-card p-8 fade-up fade-up-delay-1">
+        <div class="icon-box mb-6">
+          <i data-lucide="users" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif-display text-2xl text-dark mb-3">Attorney Collaboration</h3>
+        <p class="text-text-sec leading-relaxed">Seamless review workflows that keep attorneys in control while accelerating client intake.</p>
+      </div>
+
+      <div class="premium-card p-8 fade-up fade-up-delay-2">
+        <div class="icon-box mb-6">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif-display text-2xl text-dark mb-3">Secure Data Management</h3>
+        <p class="text-text-sec leading-relaxed">Enterprise-grade encryption and compliance controls protect sensitive client information.</p>
+      </div>
+
+      <div class="premium-card p-8 fade-up fade-up-delay-3">
+        <div class="icon-box mb-6">
+          <i data-lucide="folder-kanban" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif-display text-2xl text-dark mb-3">Multi-Case Tracking</h3>
+        <p class="text-text-sec leading-relaxed">Manage multiple cases simultaneously with real-time progress tracking and smart notifications.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY & COMPLIANCE -->
+<section id="security" class="section-pad bg-dark relative overflow-hidden">
+  <div class="absolute inset-0 opacity-20">
+    <img src="https://image.qwenlm.ai/public_source/fef3353f-8d3b-44bc-86ac-2246aa7ef3be/191999414-7317-473d-86bf-19c9aae808aa.png" alt="" class="w-full h-full object-cover" />
+  </div>
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
+    <div class="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
+      <!-- Left: Image -->
+      <div class="fade-up order-2 lg:order-1">
+        <div class="relative">
+          <div class="absolute -inset-6 bg-accent/20 rounded-3xl blur-3xl"></div>
+          <img src="https://image.qwenlm.ai/public_source/fef3353f-8d3b-44bc-86ac-2246aa7ef3be/14bfc0dbf-f990-430e-97fd-9e83dbc8ab4e.png" alt="Security & Compliance" class="relative w-full rounded-3xl" />
+        </div>
+      </div>
+
+      <!-- Right: Content -->
+      <div class="fade-up fade-up-delay-1 order-1 lg:order-2">
+        <div class="badge-dark badge mb-5">
+          <i data-lucide="lock" class="w-4 h-4"></i>
+          Security & Compliance
+        </div>
+        <h2 class="font-serif-display text-4xl sm:text-5xl text-white leading-tight mb-5">
+          Built Around Privacy & Trust
+        </h2>
+        <p class="text-lg text-white/60 leading-relaxed mb-10">
+          Your clients trust you with their most sensitive information. We protect it with enterprise-grade security at every layer.
+        </p>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="premium-card-dark p-6">
+            <div class="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center mb-4">
+              <i data-lucide="shield" class="w-5 h-5 text-accent"></i>
+            </div>
+            <h4 class="font-semibold text-white mb-1">Encrypted Data</h4>
+            <p class="text-sm text-white/50">AES-256 encryption at rest and in transit.</p>
+          </div>
+          <div class="premium-card-dark p-6">
+            <div class="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center mb-4">
+              <i data-lucide="eye-off" class="w-5 h-5 text-accent"></i>
+            </div>
+            <h4 class="font-semibold text-white mb-1">Privacy First</h4>
+            <p class="text-sm text-white/50">Zero data sharing. Your data stays yours.</p>
+          </div>
+          <div class="premium-card-dark p-6">
+            <div class="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center mb-4">
+              <i data-lucide="scale" class="w-5 h-5 text-accent"></i>
+            </div>
+            <h4 class="font-semibold text-white mb-1">Compliance Ready</h4>
+            <p class="text-sm text-white/50">SOC 2, GDPR, and HIPAA compliant.</p>
+          </div>
+          <div class="premium-card-dark p-6">
+            <div class="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center mb-4">
+              <i data-lucide="server" class="w-5 h-5 text-accent"></i>
+            </div>
+            <h4 class="font-semibold text-white mb-1">Secure Infrastructure</h4>
+            <p class="text-sm text-white/50">Hosted on isolated, audited cloud environments.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="section-pad bg-white">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="text-center max-w-2xl mx-auto mb-16 fade-up">
+      <div class="badge mb-5">
+        <i data-lucide="quote" class="w-4 h-4"></i>
+        Testimonials
+      </div>
+      <h2 class="font-serif-display text-4xl sm:text-5xl lg:text-6xl text-dark leading-tight mb-5">
+        Trusted by Immigration Professionals
+      </h2>
+      <p class="text-lg text-text-sec leading-relaxed">
+        Hear from attorneys and legal professionals who transformed their practice with Quimigrate.AI.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="premium-card p-8 fade-up fade-up-delay-1">
+        <div class="flex items-center gap-1 mb-5">
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+        </div>
+        <p class="text-dark leading-relaxed mb-7">"Quimigrate.AI cut our document preparation time by 70%. The AI understands immigration forms better than most paralegals I've worked with."</p>
+        <div class="flex items-center gap-4 pt-6 border-t border-light">
+          <div class="avatar">MR</div>
+          <div>
+            <div class="font-semibold text-dark">Maria Rodriguez</div>
+            <div class="text-sm text-text-sec">Immigration Attorney, NYC</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="premium-card p-8 fade-up fade-up-delay-2">
+        <div class="flex items-center gap-1 mb-5">
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+        </div>
+        <p class="text-dark leading-relaxed mb-7">"The client intake experience is incredible. Our clients feel guided and supported, and we get cleaner, more complete information from day one."</p>
+        <div class="flex items-center gap-4 pt-6 border-t border-light">
+          <div class="avatar">JC</div>
+          <div>
+            <div class="font-semibold text-dark">James Chen</div>
+            <div class="text-sm text-text-sec">Managing Partner, Chen Law Group</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="premium-card p-8 fade-up fade-up-delay-3">
+        <div class="flex items-center gap-1 mb-5">
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-accent text-accent"></i>
+        </div>
+        <p class="text-dark leading-relaxed mb-7">"We handle 200+ cases monthly. Quimigrate.AI is the first tool that actually scales with our practice without sacrificing quality or compliance."</p>
+        <div class="flex items-center gap-4 pt-6 border-t border-light">
+          <div class="avatar">AP</div>
+          <div>
+            <div class="font-semibold text-dark">Amira Patel</div>
+            <div class="text-sm text-text-sec">Senior Counsel, Global Immigration Partners</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-bg section-pad relative">
+  <div class="max-w-5xl mx-auto px-6 lg:px-10 text-center relative z-10 fade-up">
+    <div class="badge-dark badge mb-6 inline-flex">
+      <i data-lucide="sparkles" class="w-4 h-4"></i>
+      Get Started Today
+    </div>
+    <h2 class="font-serif-display text-4xl sm:text-5xl lg:text-6xl text-white leading-tight mb-6">
+      Prepare Immigration Cases Smarter.
+    </h2>
+    <p class="text-lg sm:text-xl text-white/60 leading-relaxed mb-10 max-w-2xl mx-auto">
+      Join immigration professionals using AI to save time, reduce errors, and improve client experience.
+    </p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="#" class="btn-primary px-8 py-4 rounded-full text-base inline-flex items-center gap-2">
+        Start Using Quimigrate.AI
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+      <a href="#" class="btn-ghost px-8 py-4 rounded-full text-base inline-flex items-center gap-2">
+        <i data-lucide="calendar" class="w-4 h-4"></i>
+        Schedule Demo
+      </a>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-x-8 gap-y-3 mt-14">
+      <div class="trust-item">
+        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+        Free 14-day trial
+      </div>
+      <div class="trust-item">
+        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+        No credit card required
+      </div>
+      <div class="trust-item">
+        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+        Cancel anytime
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-dark border-t border-white/5 py-14">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="grid md:grid-cols-4 gap-10 mb-12">
+      <div>
+        <a href="#" class="flex items-center gap-2.5 mb-5">
+          <div class="w-9 h-9 rounded-xl bg-accent flex items-center justify-center">
+            <i data-lucide="sparkles" class="w-5 h-5" style="color:#081B2E"></i>
+          </div>
+          <span class="font-serif-display text-xl text-white">Quimigrate<span class="text-accent">.AI</span></span>
+        </a>
+        <p class="text-white/50 text-sm leading-relaxed">AI-powered immigration assistance for individuals and law firms.</p>
+      </div>
+      <div>
+        <h5 class="font-semibold text-white mb-4 text-sm">Product</h5>
+        <ul class="space-y-3 text-sm text-white/50">
+          <li><a href="#" class="hover:text-accent transition">Features</a></li>
+          <li><a href="#" class="hover:text-accent transition">Pricing</a></li>
+          <li><a href="#" class="hover:text-accent transition">Security</a></li>
+          <li><a href="#" class="hover:text-accent transition">Integrations</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5 class="font-semibold text-white mb-4 text-sm">Company</h5>
+        <ul class="space-y-3 text-sm text-white/50">
+          <li><a href="#" class="hover:text-accent transition">About</a></li>
+          <li><a href="#" class="hover:text-accent transition">Blog</a></li>
+          <li><a href="#" class="hover:text-accent transition">Careers</a></li>
+          <li><a href="#" class="hover:text-accent transition">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5 class="font-semibold text-white mb-4 text-sm">Legal</h5>
+        <ul class="space-y-3 text-sm text-white/50">
+          <li><a href="#" class="hover:text-accent transition">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-accent transition">Terms of Service</a></li>
+          <li><a href="#" class="hover:text-accent transition">Cookie Policy</a></li>
+          <li><a href="#" class="hover:text-accent transition">GDPR</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <p class="text-sm text-white/40">© 2026 Quimigrate.AI. All rights reserved.</p>
+      <div class="flex items-center gap-4">
+        <a href="#" class="w-9 h-9 rounded-full bg-white/5 hover:bg-accent/20 flex items-center justify-center text-white/60 hover:text-accent transition">
+          <iconify-icon class="w-4 h-4" icon="mdi:twitter"></iconify-icon>
+        </a>
+        <a href="#" class="w-9 h-9 rounded-full bg-white/5 hover:bg-accent/20 flex items-center justify-center text-white/60 hover:text-accent transition">
+          <iconify-icon class="w-4 h-4" icon="mdi:linkedin"></iconify-icon>
+        </a>
+        <a href="#" class="w-9 h-9 rounded-full bg-white/5 hover:bg-accent/20 flex items-center justify-center text-white/60 hover:text-accent transition">
+          <iconify-icon class="w-4 h-4" icon="mdi:github"></iconify-icon>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Initialize Lucide icons
+  lucide.createIcons();
+
+  // Intersection Observer for fade-up animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.animationPlayState = 'running';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => {
+    el.style.animationPlayState = 'paused';
+    observer.observe(el);
+  });
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
+
